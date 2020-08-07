@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <link href="reset.css" rel="stylesheet" type="text/css" media="all">
+  <link href="styles.css" rel="stylesheet" type="text/css" media="all">
+  <title>Etch-a-Sketch</title>
+</head>
+<body>
+    <script>
+
+        // Set up initial square size
+        let size = 16;
+
+        // Create clear button
+        const button = document.createElement('button');
+        button.textContent = 'Clear';
+        button.classList.add('btn')
+
+        // Create container div
+        const container = document.createElement('div');
+        container.classList.add('container');
+
+        // Setup grid
+        let gridColumns = `grid-template-columns: repeat(${size}, 1fr); `
+        let gridRows = `grid-template-rows: repeat(${size}, 1fr)`
+        container.setAttribute('style', (gridColumns + gridRows));
+
+        // Create 256 square divs inside container
+        let div;
+        for (let i = 0; i < 256; i++) {
+            div = document.createElement('div');
+            div.classList.add('square')
+            div.classList.add('d' + (i + 1));
+            container.appendChild(div);
+        }
+
+        // Add button and container to DOM
+        document.body.appendChild(button);
+        document.body.appendChild(container);
+
+        // Clear board and re-construct with input size
+        const btn = document.querySelector('.btn');
+        btn.addEventListener('click', (e) => {
+            size = prompt('How many squares per side to make the new grid?');
+        });
+
+    </script>
+</body>
+</html>
