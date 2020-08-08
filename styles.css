@@ -23,6 +23,6 @@
     background: white;
 }
 
-.square:hover {
+.hovering {
     background: grey;
 }

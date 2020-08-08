@@ -8,13 +8,12 @@
 </head>
 <body>
     <script>
-
         // Set up initial square size
-        let size = 16;
+        let size = 16; // Holds current size length of square
 
-        // Create clear button
+        // Create 'clear' button
         const button = document.createElement('button');
-        button.textContent = 'Clear';
+        button.textContent = 'clear';
         button.classList.add('btn')
 
         // Create container div
@@ -26,13 +25,14 @@
         let gridRows = `grid-template-rows: repeat(${size}, 1fr)`
         container.setAttribute('style', (gridColumns + gridRows));
 
-        // Create 256 square divs inside container
-        let div;
-        for (let i = 0; i < 256; i++) {
-            div = document.createElement('div');
-            div.classList.add('square')
-            div.classList.add('d' + (i + 1));
-            container.appendChild(div);
+        // Create (size * size) square divs inside container
+        let square; // Temporarily holds newly-created square div
+        for (let i = 0; i < (size * size); i++) {
+            square = document.createElement('div');
+            square.classList.add('square')
+            square.classList.add('d' + (i + 1));
+            square.addEventListener('mouseenter', hoverEffect); // Sets up a "hover" effect event
+            container.appendChild(square);
         }
 
         // Add button and container to DOM
@@ -42,9 +42,76 @@
         // Clear board and re-construct with input size
         const btn = document.querySelector('.btn');
         btn.addEventListener('click', (e) => {
-            size = prompt('How many squares per side to make the new grid?');
+
+            // Clear board
+            let squares = document.querySelectorAll('.square');
+            squares.forEach(square => square.classList.remove('hovering'));
+
+            // Ask user for new size
+            let newSize = prompt('How many squares per side to make the new grid?');
+            newSize = parseInt(newSize, 10);
+
+            // Checks for number existence
+            if (newSize === NaN) {
+                return;
+            }
+
+            // Pop off square divs to reflect new SMALLER size
+            if (size > newSize) {
+
+                // Removes container from the DOM temporarily
+                document.body.removeChild(container);
+
+                // Pop off square divs to adjust for new size
+                for (let i = (size * size); i > (newSize * newSize); i--) {
+                    let childClass = '.d' + i;
+                    square = container.querySelector(childClass);
+                    container.removeChild(square);
+                }
+
+                size = newSize; // Update current size length of square
+
+                // Setup grid
+                gridColumns = `grid-template-columns: repeat(${size}, 1fr); `
+                gridRows = `grid-template-rows: repeat(${size}, 1fr)`
+                container.setAttribute('style', (gridColumns + gridRows));
+
+                // Add container to DOM
+                document.body.appendChild(container);
+            }
+
+            // Create more square divs to reflect new BIGGER size and append them to container
+            else if (size < newSize) {
+
+                // Removes container from the DOM temporarily
+                document.body.removeChild(container);
+                
+                // Create and push
+                for (let i = (size * size); i < (newSize * newSize); i++) {
+                    square = document.createElement('div');
+                    square.classList.add('square')
+                    square.classList.add('d' + (i + 1));
+                    square.addEventListener('mouseenter', hoverEffect); // Sets up a "hover" effect event
+                    container.appendChild(square);
+                }
+
+                size = newSize; // Update current size length of square
+
+                // Setup grid
+                gridColumns = `grid-template-columns: repeat(${size}, 1fr); `
+                gridRows = `grid-template-rows: repeat(${size}, 1fr)`
+                container.setAttribute('style', (gridColumns + gridRows));
+
+                // Add container to DOM
+                document.body.appendChild(container);
+            }
+
         });
 
+        // Changes color of square div when mouse passes over it
+        function hoverEffect(e) {
+            this.classList.add('hovering');
+        }
     </script>
 </body>
 </html>
